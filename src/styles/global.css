@@ -1,93 +1,58 @@
-@import 'tailwindcss';
-
-:root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0a0a0a;
-      --foreground: #ededed;
-    }
-  }
-  
-  body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  }
 /* styles/globals.css */
 
-/* 1. Import a clean, modern sans-serif */
+/* 1. Tailwind and Fonts */
+@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
-/* 3. Base layer overrides */
+/* 2. Global CSS Variables (for dark/light mode) */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* 3. Base Styles */
 @layer base {
   html {
     font-family: 'Inter', sans-serif;
   }
+
   body {
-    background-color: theme('colors.gray.50');
-    color: theme('colors.gray.900');
+    background-color: var(--background);
+    color: var(--foreground);
     line-height: 1.6;
   }
 }
 
-/* 4. Reusable component classes */
+/* 4. Component Classes */
 @layer components {
-  /* Card container */
+  /* Generic card */
   .card {
     @apply bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex flex-col items-center text-center transition-shadow hover:shadow-lg;
   }
 
-  /* Avatar placeholder (or image wrapper) */
+  /* Avatar styles */
   .avatar {
     @apply w-16 h-16 mb-4 rounded-full bg-gray-200 overflow-hidden;
   }
 
-  /* Primary button */
-  .btn-primary {
-    @apply inline-block px-4 py-2 text-sm font-medium bg-purple-600 text-white rounded-md hover:bg-purple-700 transition;
-  }
-
-  /* Header / Nav link styling */
-  .nav-link {
-    @apply text-gray-700 hover:text-indigo-600 font-medium;
-  }
-}
-
-/* 5. Utility overrides or additions */
-@layer utilities {
-  /* subtle page-wide scrollbar style (optional) */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-  .scrollbar-thumb-rounded {
-    scrollbar-color: theme('colors.gray.400') transparent;
-  }
-  /* you can add more here as needed */
-}
-/* Custom font and color setup */
-
-@layer base {
-  html {
-    font-family: 'Inter', sans-serif;
-  }
-  body {
-    background-color: theme('colors.gray.50');
-    color: theme('colors.gray.900');
-    line-height: 1.6;
-  }
-}
-
-@layer components {
-  .profile-card {
-    @apply bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-lg w-full;
-  }
-
   .profile-avatar {
     @apply w-24 h-24 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 mb-4 border-4 border-white shadow-md;
+  }
+
+  .user-avatar {
+    @apply w-24 h-24 rounded-full border-4 border-white shadow mb-4;
+  }
+
+  /* Profile card */
+  .profile-card {
+    @apply bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-lg w-full;
   }
 
   .profile-heading {
@@ -98,39 +63,30 @@
     @apply text-sm text-gray-500 mb-4;
   }
 
+  /* Buttons */
+  .btn-primary {
+    @apply inline-block px-4 py-2 text-sm font-medium bg-purple-600 text-white rounded-md hover:bg-purple-700 transition;
+  }
+
   .btn-back {
     @apply mt-6 inline-block px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 transition;
-  }
-}
-
-@layer utilities {
-  .center-screen {
-    @apply min-h-screen flex items-center justify-center px-4;
-  }
-}
-
-@layer base {
-
-  body {
-    background-color: theme('colors.white');
-    color: theme('colors.gray.900');
-    line-height: 1.6;
-  }
-}
-
-@layer components {
-  .user-card {
-    @apply bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col items-center text-center transition hover:shadow-md;
-  }
-
-  .user-avatar {
-    @apply w-24 h-24 rounded-full border-4 border-white shadow mb-4;
   }
 
   .btn-view-profile {
     @apply inline-block px-4 py-2 text-sm font-medium bg-purple-600 text-white rounded-md hover:bg-purple-700 transition;
   }
 
+  /* Nav links */
+  .nav-link {
+    @apply text-gray-700 hover:text-indigo-600 font-medium;
+  }
+
+  /* User card (CSR) */
+  .user-card {
+    @apply bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col items-center text-center transition hover:shadow-md;
+  }
+
+  /* Status badges */
   .status-tag {
     @apply text-sm mb-4;
   }
@@ -144,7 +100,20 @@
   }
 }
 
+/* 5. Utility Classes */
 @layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-rounded {
+    scrollbar-color: theme('colors.gray.400') transparent;
+  }
+
+  .center-screen {
+    @apply min-h-screen flex items-center justify-center px-4;
+  }
+
   .fade-in {
     animation: fadeIn 0.4s ease-out;
   }

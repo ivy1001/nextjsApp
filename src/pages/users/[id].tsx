@@ -96,7 +96,7 @@ export const getServerSideProps: GetServerSideProps<{
             </li>
           </ul>
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push('/')}
             className="btn-primary w-full"
           >
             ← Go Back
