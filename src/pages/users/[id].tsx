@@ -1,10 +1,11 @@
 // pages/users/[id].tsx
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import '../../styles/global.css';
+import gsap from 'gsap';
 // This page demonstrates server-side rendering with caching using Redis.
 type User = {
   id: number;
@@ -46,26 +47,52 @@ export const getServerSideProps: GetServerSideProps<{
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const profileRef = useRef<HTMLDivElement>(null);
+  const postRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   useEffect(() => {
+    if (profileRef.current) {
+      gsap.from(profileRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 1.5,
+        ease: 'power2.out',
+      });
+    }
+  
     fetch(`https://jsonplaceholder.typicode.com/users/${user.id}/posts`)
       .then((res) => res.json())
       .then((data: Post[]) => {
         setPosts(data);
         setLoading(false);
+  
+        // Animate all post cards from bottom with fade-in
+        setTimeout(() => {
+            gsap.fromTo(
+              postRefs.current,
+              { opacity: 0, y: 30 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out',
+              }
+            );
+          }, 50); // Wait just a bit for DOM to update
+          
       });
   }, [user.id]);
+  
 
   return (
     <main className="min-h-screen bg-gray-50 py-10">
       <div className="container mx-auto px-6">
         
         {/* Profile Card */}
-        <div className="card max-w-md mx-auto">
+        <div ref={profileRef} className="card max-w-md mx-auto">
         <p className={`text-sm text-center mb-4 ${fromCache ? 'text-green-600' : 'text-red-600'}`}>
-  Loaded from: {fromCache ? 'Redis Cache ✅' : 'API 🔄'}
-</p>
-
+            Loaded from: {fromCache ? 'Redis Cache ✅' : 'API 🔄'}
+        </p>
           <div className="avatar mx-auto">
             <Image
               src={`https://i.pravatar.cc/150?img=${user.id}`}
@@ -129,14 +156,17 @@ export const getServerSideProps: GetServerSideProps<{
             <p className="text-gray-500">Loading posts...</p>
           ) : (
             <div className="grid grid-cols-1 gap-6">
-              {posts.map((post) => (
-                <Link
-                    key={post.id}
-                    href={`/posts/${post.id}`}
+              {posts.map((post, i) => (
+                <Link key={post.id} href={`/posts/${post.id}`} passHref legacyBehavior>
+                    <a
+                    ref={(el) => {
+                        postRefs.current[i] = el;
+                    }}
                     className="block card hover:bg-gray-50 transition"
-                >
+                    >
                     <h3 className="text-lg font-medium text-gray-900 mb-2">{post.title}</h3>
                     <p className="text-gray-700 text-sm">{post.body}</p>
+                    </a>
                 </Link>
                 ))}
             </div>

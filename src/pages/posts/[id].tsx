@@ -4,6 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import redis from '@/lib/redis'
 import '../../styles/global.css'
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+
+
 interface Post {
   id: number
   title: string
@@ -70,6 +74,33 @@ export default function PostPage({
   comments: Comment[]
   fromCache: boolean
 }) {
+  const postRef = useRef<HTMLDivElement>(null);
+  const commentRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (postRef.current) {
+      gsap.fromTo(
+        postRef.current,
+        { opacity: 0, y: -30 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+      );
+    }
+
+    // Animate comments from bottom
+    setTimeout(() => {
+      gsap.fromTo(
+        commentRefs.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }
+      );
+    }, 50);
+  }, []);
   return (
     <main className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-6">
@@ -82,13 +113,14 @@ export default function PostPage({
         </Link>
 
         {/* Post Card */}
-        <article className="card max-w-3xl mx-auto mb-10">
-          <p className={`text-sm mb-4 ${fromCache ? 'text-green-600' : 'text-red-600'}`}>
-            Loaded from: {fromCache ? 'Redis Cache ✅' : 'API 🔄'}
-          </p>
-          <h1 className="text-3xl font-bold text-purple-700 mb-4">{post.title}</h1>
-          <p className="text-gray-700 leading-relaxed">{post.body}</p>
-        </article>
+        <article ref={postRef} className="card max-w-3xl mx-auto mb-10">
+        <p className={`text-sm mb-4 ${fromCache ? 'text-green-600' : 'text-red-600'}`}>
+          Loaded from: {fromCache ? 'Redis Cache ✅' : 'API 🔄'}
+        </p>
+        <h1 className="text-3xl font-bold text-purple-700 mb-4">{post.title}</h1>
+        <p className="text-gray-700 leading-relaxed">{post.body}</p>
+      </article>
+        
 
         {/* Comments Section */}
         <section className="max-w-3xl mx-auto">
@@ -96,27 +128,28 @@ export default function PostPage({
             Comments ({comments.length})
           </h2>
           <div className="space-y-6">
-            {comments.map((c) => (
-              <div
-                key={c.id}
-                className="bg-white border border-gray-200 rounded-xl p-6 flex space-x-4 hover:shadow-sm transition"
-              >
-                <div className="avatar w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                  <Image
-                    src={`https://i.pravatar.cc/100?img=${c.id}`}
-                    alt={c.name}
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{c.name}</p>
-                  <p className="text-xs text-gray-500 mb-2">{c.email}</p>
-                  <p className="text-gray-700 text-sm leading-relaxed">{c.body}</p>
-                </div>
-              </div>
-            ))}
+          {comments.map((c, i) => (
+          <div
+            key={c.id}
+            ref={(el) => { commentRefs.current[i] = el; }}
+            className="bg-white border border-gray-200 rounded-xl p-6 flex space-x-4 hover:shadow-sm transition"
+          >
+            <div className="avatar w-16 h-16 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+              <Image
+                src={`https://i.pravatar.cc/100?img=${c.id}`}
+                alt={c.name}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">{c.name}</p>
+              <p className="text-xs text-gray-500 mb-2">{c.email}</p>
+              <p className="text-gray-700 text-sm leading-relaxed">{c.body}</p>
+            </div>
+          </div>
+        ))}
           </div>
         </section>
       </div>
