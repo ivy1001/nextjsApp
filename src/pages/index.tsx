@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import '../styles/global.css';
 //page demonstrates client-side rendering with caching using Redis.
 type User = {
   id: number;

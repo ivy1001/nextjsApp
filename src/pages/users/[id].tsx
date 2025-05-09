@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import '../../styles/global.css';
 import gsap from 'gsap';
 // This page demonstrates server-side rendering with caching using Redis.
 type User = {

@@ -3,7 +3,6 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import redis from '@/lib/redis'
-import '../../styles/global.css'
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
